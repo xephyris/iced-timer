@@ -1,11 +1,12 @@
 use iced::widget::{Row, button, row, text};
-use iced::Element;
+use iced::window::Settings;
+use iced::{Element};
 use iced_timer::Message;
-
 
 #[derive(Default)]
 struct Timer {
     counter: u32,
+    
 }
 
 impl Timer {
@@ -28,5 +29,5 @@ impl Timer {
 
 
 pub fn main() -> iced::Result {
-    iced::run(Timer::update, Timer::view)
+    iced::application(Timer::default, Timer::update, Timer::view).window(Settings {level: iced::window::Level::AlwaysOnTop, ..Default::default()}).run()
 }
