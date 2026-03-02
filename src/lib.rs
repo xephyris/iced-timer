@@ -1,5 +1,22 @@
-#[derive(Copy, Clone, Eq, PartialEq)]
+use iced::{Color, Theme, widget::button};
+
+pub mod timer;
+
+#[derive(Clone, Eq, PartialEq)]
 pub enum Message {
-    CounterIncrement,
-    CounterDecrement,
+    ToggleTimer,
+    Tick,
+    Editing(u32, String),
+    ToggleEditing,
+}
+
+pub fn clear_button_style(text: Color) -> button::Style {
+    button::Style {
+        background: None,
+        text_color: text,
+        border: iced::Border::default(),
+        shadow: iced::Shadow::default(),
+        snap: false,
+    }
+    
 }
