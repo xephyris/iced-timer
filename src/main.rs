@@ -9,17 +9,16 @@ use iced_timer::timer::Timer;
 #[derive(Default)]
 struct TimerWidget {
     task_timer: Timer,
-    
 }
 
 impl TimerWidget {
     fn update(&mut self, message: Message) {
         match message {
-            Message::ToggleTimer => {
-                self.task_timer.toggle();
+            Message::ToggleTimer(save) => {
+                self.task_timer.toggle(save);
             },
             Message::ToggleEditing => {
-                self.task_timer.toggle_editing();
+                self.task_timer.toggle_editing(false);
             },
             Message::Tick => {
                 if self.task_timer.started() || self.task_timer.ended() {
@@ -91,18 +90,26 @@ impl TimerWidget {
                     })
                 }
                 ],
-            button(if self.task_timer.editing() {
-                    "Confirm"
-                } else { 
-                    if self.task_timer.ended() {
-                        "Reset"
-                    } else if !self.task_timer.started() {
-                        "Start"
-                    } else {
-                        "Pause"
+            row![
+                button(if self.task_timer.editing() {
+                        "Confirm"
+                    } else { 
+                        if !self.task_timer.started() && !self.task_timer.ended() {
+                            "Start"
+                        } else if self.task_timer.ended() {
+                            "Stop"
+                        } else {
+                            "Pause"
+                        }
                     }
-                }
-            ).on_press(Message::ToggleTimer)
+                ).on_press(Message::ToggleTimer(true)),
+                button(if self.task_timer.editing() {
+                        "Cancel"
+                    } else { 
+                        "Reset"
+                    }
+                ).on_press(Message::ToggleTimer(false))
+            ]
         ].into()
     }
 

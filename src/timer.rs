@@ -5,6 +5,7 @@ pub struct Timer {
     end: Option<Instant>,
     total_duration: Duration,
     passed_duration: Duration,
+    end_duration: Duration,
     time_str: String,
     editing: bool,
     temp_values: Option<(String, String, String)>
@@ -17,6 +18,7 @@ impl Default for Timer {
             end: Default::default(), 
             total_duration: Default::default(), 
             passed_duration: Duration::ZERO, 
+            end_duration: Duration::ZERO,
             time_str: Timer::dur_to_string(Duration::default(), false),
             editing: false,
             temp_values: None,
@@ -31,6 +33,7 @@ impl Timer {
             end: None,
             total_duration: duration,
             passed_duration: Duration::ZERO,
+            end_duration: Duration::ZERO,
             time_str: Timer::dur_to_string(duration, false),
             editing: false,
             temp_values: None,
@@ -38,7 +41,11 @@ impl Timer {
     }
 
     pub fn start(&mut self) {
-        self.start = Some(Instant::now());
+        if self.end_duration.as_secs() > 0 {
+            self.end = Some(Instant::now());
+        } else {
+            self.start = Some(Instant::now());
+        }
     }
 
     pub fn started(&self) -> bool {
@@ -50,7 +57,7 @@ impl Timer {
     }
 
     pub fn ended(&self) -> bool {
-        if self.end.is_some() {
+        if self.end.is_some() || self.end_duration.as_secs() > 0 {
             true
         } else {
             false
@@ -59,8 +66,12 @@ impl Timer {
 
     pub fn stop(&mut self) {
         if let Some(start) = self.start {
-            self.start = None;
             self.passed_duration = self.passed_duration + start.elapsed();
+            self.start = None;
+        }
+        if let Some(end) = self.end {
+            self.end_duration = self.end_duration + end.elapsed();
+            self.end = None;
         }
     }
 
@@ -68,24 +79,27 @@ impl Timer {
         self.start = None;
         self.end = None;
         self.passed_duration = Duration::ZERO;
+        self.end_duration = Duration::ZERO;
         self.total_duration = duration;
         self.time_str = Timer::dur_to_string(duration, false)
     }
 
-    pub fn toggle(&mut self) {
+    pub fn toggle(&mut self, save: bool) {
         if !self.editing {
             if let Some(_start) = self.start {
                 println!("Stopping");
                 self.stop();
-            } else if let Some(_end) = self.end {
+            } else if let Some(_end) = self.end && save == false {
                 println!("Resetting");
                 self.reset(self.total_duration);
+            } else if let Some(_end) = self.end {
+                self.stop();
             } else {
                 println!("Starting");
                 self.start();
             }
         } else {
-            self.toggle_editing();
+            self.toggle_editing(save);
         }
     }
 
@@ -109,7 +123,7 @@ impl Timer {
                 self.end = Some(Instant::now());
             }
         } else if let Some(end) = self.end {
-            self.time_str = Timer::dur_to_string(end.elapsed(), true);
+            self.time_str = Timer::dur_to_string((end.elapsed() + self.end_duration), false);
         } else {
             println!("Timer has not been started");
         }
@@ -119,7 +133,7 @@ impl Timer {
         self.editing
     }
 
-    pub fn toggle_editing(&mut self) {
+    pub fn toggle_editing(&mut self, save: bool) {
         if self.editing == false {
             self.stop();
             let duration = self.total_duration - self.passed_duration;
@@ -129,7 +143,7 @@ impl Timer {
             self.time_str = format!("{}:{}:{}", hours, minutes, seconds);
             self.temp_values = Some((hours, minutes, seconds));
         } else {
-            if let Some((hour, minute, second)) = &self.temp_values {
+            if let Some((hour, minute, second)) = &self.temp_values && save {
                 // println!("hour, minute, second, {} {} {}", hour, minute, second);
                 self.reset(Timer::string_to_duration(format!("{}:{}:{}", hour, minute, second)));
             }

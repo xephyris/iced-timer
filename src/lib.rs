@@ -4,7 +4,7 @@ pub mod timer;
 
 #[derive(Clone, Eq, PartialEq)]
 pub enum Message {
-    ToggleTimer,
+    ToggleTimer(bool),
     Tick,
     Editing(u32, String),
     ToggleEditing,
