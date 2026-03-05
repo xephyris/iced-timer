@@ -1,6 +1,7 @@
 use iced::{Color, Theme, widget::button};
 
 pub mod timer;
+pub mod stopwatch;
 
 #[derive(Clone, Eq, PartialEq)]
 pub enum Message {
@@ -8,6 +9,7 @@ pub enum Message {
     Tick,
     Editing(u32, String),
     ToggleEditing,
+    Break,
 }
 
 pub fn clear_button_style(text: Color) -> button::Style {

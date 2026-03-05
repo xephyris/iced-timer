@@ -118,7 +118,7 @@ impl Timer {
         if let Some(start) = self.start {
             if (self.passed_duration + start.elapsed()) < self.total_duration {
                 self.time_str = Timer::dur_to_string(self.total_duration.saturating_sub(self.passed_duration + start.elapsed()), true);
-            } else if self.start.is_some() {
+            } else {
                 self.start = None;
                 self.end = Some(Instant::now());
             }

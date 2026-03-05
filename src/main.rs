@@ -3,12 +3,15 @@ use std::time::{Duration, Instant};
 use iced::widget::{Row, button, row, text, text_input, column};
 use iced::window::Settings;
 use iced::{Alignment, Element, Subscription, Color, Theme};
+use iced_timer::stopwatch::Stopwatch;
 use iced_timer::{Message, clear_button_style};
 use iced_timer::timer::Timer;
 
 #[derive(Default)]
 struct TimerWidget {
     task_timer: Timer,
+    stopwatch: Stopwatch,
+    break_enabled: bool,
 }
 
 impl TimerWidget {
@@ -108,7 +111,13 @@ impl TimerWidget {
                     } else { 
                         "Reset"
                     }
-                ).on_press(Message::ToggleTimer(false))
+                ).on_press(Message::ToggleTimer(false)),
+                button(if self.break_enabled {
+                        "End Break"
+                    } else {
+                        "Break"
+                    }
+                ).on_press(Message::Break)
             ]
         ].into()
     }
@@ -124,7 +133,7 @@ impl TimerWidget {
 
 
 pub fn main() -> iced::Result {
-    iced::application(|| TimerWidget {task_timer: Timer::new(Duration::from_mins(10))}, TimerWidget::update, TimerWidget::view)
+    iced::application(|| TimerWidget {task_timer: Timer::new(Duration::from_mins(10)), stopwatch: Stopwatch::new(), break_enabled: false}, TimerWidget::update, TimerWidget::view)
         .window(Settings {level: iced::window::Level::AlwaysOnTop, ..Default::default()})
         .subscription(|f| TimerWidget::subscription(f))
         .run()
