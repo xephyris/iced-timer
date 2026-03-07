@@ -27,10 +27,24 @@ impl TimerWidget {
                 if self.task_timer.started() || self.task_timer.ended() {
                     self.task_timer.tick();
                 }
+                if self.stopwatch.started() {
+                    self.stopwatch.tick();
+                }
             },
             Message::Editing(index, value) => {
                 self.task_timer.set_temp_vals(index, value);
             },
+            Message::ToggleBreak => {
+                if self.break_enabled {
+                    self.stopwatch.stop();
+                    self.task_timer.start();
+                    self.break_enabled = false;
+                } else {
+                    self.stopwatch.start();
+                    self.task_timer.stop();
+                    self.break_enabled = true;
+                }
+            }
             _ => {}
         }
     }
@@ -117,13 +131,16 @@ impl TimerWidget {
                     } else {
                         "Break"
                     }
-                ).on_press(Message::Break)
+                ).on_press(Message::ToggleBreak)
+            ],
+            row![
+                text(format!("Total Break Time: {}", self.stopwatch.to_string()))
             ]
         ].into()
     }
 
     pub fn subscription(timer: &TimerWidget) -> Subscription<Message> {
-        if timer.task_timer.ms_enabled() {
+        if timer.task_timer.ms_enabled() || timer.stopwatch.ms_enabled() {
             iced::time::every(Duration::from_millis(10)).map(|_| Message::Tick )
         } else {
             iced::time::every(Duration::from_millis(500)).map(|_| Message::Tick )

@@ -9,7 +9,7 @@ pub enum Message {
     Tick,
     Editing(u32, String),
     ToggleEditing,
-    Break,
+    ToggleBreak,
 }
 
 pub fn clear_button_style(text: Color) -> button::Style {

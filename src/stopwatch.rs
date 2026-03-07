@@ -74,6 +74,18 @@ impl Stopwatch {
         }
     }
 
+    pub fn ms_enabled(&self) -> bool {
+        if let Some(start) = self.start {
+            if (self.duration + start.elapsed()).as_secs() / 3600 < 1{
+                true
+            } else {
+                false
+            }
+        } else {
+            false
+        }
+    }
+
     pub fn to_string(&self) -> String {
         self.time_str.clone()
     }
