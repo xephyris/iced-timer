@@ -1,6 +1,6 @@
 use std::time::{Duration, Instant};
 
-use iced::widget::{Row, button, row, text, text_input, column};
+use iced::widget::{Row, button, column, row, space, text, text_input};
 use iced::window::Settings;
 use iced::{Alignment, Element, Subscription, Color, Theme};
 use iced_timer::stopwatch::Stopwatch;
@@ -120,12 +120,14 @@ impl TimerWidget {
                         }
                     }
                 ).on_press(Message::ToggleTimer(true)),
+                space().width(10),
                 button(if self.task_timer.editing() {
                         "Cancel"
                     } else { 
                         "Reset"
                     }
                 ).on_press(Message::ToggleTimer(false)),
+                space().width(10),
                 button(if self.break_enabled {
                         "End Break"
                     } else {
@@ -133,8 +135,9 @@ impl TimerWidget {
                     }
                 ).on_press(Message::ToggleBreak)
             ],
+            space().height(20),
             row![
-                text(format!("Total Break Time: {}", self.stopwatch.to_string()))
+                text(format!(" Total Break Time: {}", self.stopwatch.to_string())).center()
             ]
         ].into()
     }
