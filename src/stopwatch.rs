@@ -29,7 +29,7 @@ impl Stopwatch {
         }
     }
 
-    pub fn stop(&mut self) {
+    pub fn pause(&mut self) {
         if let Some(start) = self.start {
             self.duration = self.duration + start.elapsed();
             self.start = None;
@@ -45,7 +45,7 @@ impl Stopwatch {
     pub fn toggle(&mut self, save: bool) {
         if let Some(_start) = self.start {
             println!("Stopping");
-            self.stop();
+            self.pause();
         } else {
             println!("Starting");
             self.start();

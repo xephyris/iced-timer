@@ -36,7 +36,7 @@ impl TimerWidget {
             },
             Message::ToggleBreak => {
                 if self.break_enabled {
-                    self.stopwatch.stop();
+                    self.stopwatch.pause();
                     self.task_timer.start();
                     self.break_enabled = false;
                 } else {
