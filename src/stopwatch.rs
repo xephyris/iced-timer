@@ -67,7 +67,7 @@ impl Stopwatch {
         let seconds = duration.as_secs() % 60;
         if hours < 1 && with_ms {
             let millis = (duration.as_millis() % 1000) as u64 / 10;
-            format!("{:02}:{:02}:{:02}", minutes, seconds, millis)
+            format!("{:02}:{:02}.{:02}", minutes, seconds, millis)
         } else {
             // println!("{}:{:02}:{:02}", hours, minutes, seconds);
             format!("{}:{:02}:{:02}", hours, minutes, seconds)

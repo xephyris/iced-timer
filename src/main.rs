@@ -2,7 +2,7 @@ use std::time::{Duration, Instant};
 
 use iced::widget::{Row, button, column, row, space, text, text_input};
 use iced::window::Settings;
-use iced::{Alignment, Element, Subscription, Color, Theme};
+use iced::{Alignment, Color, Element, Point, Size, Subscription, Theme};
 use iced_timer::stopwatch::Stopwatch;
 use iced_timer::{Message, clear_button_style};
 use iced_timer::timer::Timer;
@@ -88,7 +88,11 @@ impl TimerWidget {
                             clear_button_style(theme.palette().text)
                     })
                 }, 
-                text(" : ").size(20).center(), 
+                if !self.task_timer.ms_enabled() {
+                    text(" : ").size(20).center()
+                } else {
+                    text(".").size(20).center()
+                }, 
                 if !self.task_timer.editing() {
                     button(text(hms.2).size(20).width(30).align_x(Alignment::End))
                         .style(|theme: &Theme, status| {
@@ -119,14 +123,14 @@ impl TimerWidget {
                             "Pause"
                         }
                     }
-                ).on_press(Message::ToggleTimer(true)),
+                ).width(65.0).on_press(Message::ToggleTimer(true)),
                 space().width(10),
                 button(if self.task_timer.editing() {
                         "Cancel"
                     } else { 
                         "Reset"
                     }
-                ).on_press(Message::ToggleTimer(false)),
+                ).width(65.0).on_press(Message::ToggleTimer(false)),
                 space().width(10),
                 button(if self.break_enabled {
                         "End Break"
@@ -154,7 +158,7 @@ impl TimerWidget {
 
 pub fn main() -> iced::Result {
     iced::application(|| TimerWidget {task_timer: Timer::new(Duration::from_mins(10)), stopwatch: Stopwatch::new(), break_enabled: false}, TimerWidget::update, TimerWidget::view)
-        .window(Settings {level: iced::window::Level::AlwaysOnTop, ..Default::default()})
+        .window(Settings {level: iced::window::Level::AlwaysOnTop, size: Size {width: 210.0, height: 150.0}, position: iced::window::Position::SpecificWith(|window, resolution| {Point{x: resolution.width - window.width, y: 0.0}}), ..Default::default()})
         .subscription(|f| TimerWidget::subscription(f))
         .run()
 }
