@@ -13,7 +13,7 @@ impl Stopwatch {
         Stopwatch {
             start: None,
             duration: Duration::ZERO,
-            time_str: Stopwatch::dur_to_string(Duration::ZERO, false)
+            time_str: Stopwatch::dur_to_string(Duration::ZERO, true)
         }
     }
 
@@ -88,6 +88,10 @@ impl Stopwatch {
 
     pub fn to_string(&self) -> String {
         self.time_str.clone()
+    }
+
+    pub fn to_string_ms_removed(&self) -> String {
+        self.time_str.split(".").next().unwrap_or("00:00").to_string()
     }
 
     pub fn to_hmsms(&self) -> (String, String, String) {
