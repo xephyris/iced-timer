@@ -20,8 +20,8 @@ struct TimerWidget {
 impl TimerWidget {
     fn update(&mut self, message: Message) {
         match message {
-            Message::ToggleTimer(save) => {
-                self.task_timer.toggle(save);
+            Message::ToggleTimer(save, reset) => {
+                self.task_timer.toggle(save, reset);
             },
             Message::ToggleEditing => {
                 self.task_timer.toggle_editing(false);
@@ -135,7 +135,7 @@ impl TimerWidget {
                                 "Pause"
                             }
                         }).center()
-                    ).width(65.0).on_press(Message::ToggleTimer(true)),
+                    ).width(65.0).on_press(Message::ToggleTimer(true, false)),
                     space().width(10),
                     button(
                         text(if self.task_timer.editing() {
@@ -143,7 +143,7 @@ impl TimerWidget {
                         } else { 
                             "Reset"
                         }).center()
-                    ).width(65.0).on_press(Message::ToggleTimer(false)),
+                    ).width(65.0).on_press(Message::ToggleTimer(false, true)),
                     space().width(10),
                     button(
                         text(if self.break_enabled {

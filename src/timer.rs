@@ -84,19 +84,20 @@ impl Timer {
         self.time_str = Timer::dur_to_string(duration, false)
     }
 
-    pub fn toggle(&mut self, save: bool) {
+    pub fn toggle(&mut self, save: bool, reset: bool) {
         if !self.editing {
             if let Some(_start) = self.start {
                 println!("Stopping");
                 self.stop();
-            } else if let Some(_end) = self.end && save == false {
-                println!("Resetting");
-                self.reset(self.total_duration);
             } else if let Some(_end) = self.end {
                 self.stop();
             } else {
                 println!("Starting");
                 self.start();
+            }
+
+            if reset {
+                self.reset(self.total_duration);
             }
         } else {
             self.toggle_editing(save);
